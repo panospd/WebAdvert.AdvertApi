@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using AdvertApi.Services;
-using Microsoft.Extensions.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace AdvertApi.HealthChecks
 {
@@ -14,13 +14,14 @@ namespace AdvertApi.HealthChecks
             _storageService = storageService;
         }
 
-        public async ValueTask<IHealthCheckResult> CheckAsync(CancellationToken cancellationToken = new CancellationToken())
+        public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = new CancellationToken())
         {
-            var isStorageOk = await _storageService.CheckHealthAsync();
+            var isStorageOk = _storageService.CheckHealthAsync();
 
-            var checkStatus = isStorageOk ? CheckStatus.Healthy : CheckStatus.Unhealthy;
+            if(isStorageOk)
+                return Task.FromResult(HealthCheckResult.Healthy());
 
-            return HealthCheckResult.FromStatus(checkStatus, "");
+            return Task.FromResult(HealthCheckResult.Unhealthy());
         }
     }
 }

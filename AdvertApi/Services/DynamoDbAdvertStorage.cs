@@ -58,11 +58,11 @@ namespace AdvertApi.Services
             }
         }
 
-        public async Task<bool> CheckHealthAsync()
+        public bool CheckHealthAsync()
         {
             using (var client = new AmazonDynamoDBClient())
             {
-                var tableData = await client.DescribeTableAsync("Adverts");
+                var tableData = client.DescribeTableAsync("Adverts").Result;
                 return string.Compare(tableData.Table.TableStatus.Value, "active", StringComparison.OrdinalIgnoreCase) == 0;
             }
         }

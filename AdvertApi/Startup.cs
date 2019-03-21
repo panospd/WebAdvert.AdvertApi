@@ -25,7 +25,8 @@ namespace AdvertApi
             services.AddAutoMapper();
             services.AddTransient<IAdvertStorageService, DynamoDbAdvertStorage>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            services.AddHealthChecks(c => { c.AddCheck<StorageHealthCheck>("Storage", new TimeSpan(0, 1, 0)); });
+            services.AddHealthChecks()
+                .AddCheck<StorageHealthCheck>("example_health_check");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
