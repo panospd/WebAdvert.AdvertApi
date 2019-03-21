@@ -5,6 +5,7 @@
     <Authors>Panos Anastasiadis</Authors>
     <Company>none</Company>
     <Product>Web Advert MicroServices</Product>
+    <PackageId>AdvertApi.Models.panospd</PackageId>
   </PropertyGroup>
 
 </Project>
