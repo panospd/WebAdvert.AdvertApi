@@ -6,6 +6,7 @@
     <Company>none</Company>
     <Product>Web Advert MicroServices</Product>
     <PackageId>AdvertApi.Models.panospd</PackageId>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
 </Project>
