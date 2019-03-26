@@ -2,9 +2,13 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AdvertApi.Models;
+using AdvertApi.Models.Messages;
 using AdvertApi.Services;
 using Amazon.DynamoDBv2;
+using Amazon.SimpleNotificationService;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 
 namespace AdvertApi.Controllers
 {
@@ -13,10 +17,12 @@ namespace AdvertApi.Controllers
     public class Advert : Controller
     {
         private readonly IAdvertStorageService _advertStorageService;
+        private readonly IConfiguration _configuration;
 
-        public Advert(IAdvertStorageService advertStorageService)
+        public Advert(IAdvertStorageService advertStorageService, IConfiguration configuration)
         {
             _advertStorageService = advertStorageService;
+            _configuration = configuration;
         }
 
         [HttpPost]
@@ -51,6 +57,7 @@ namespace AdvertApi.Controllers
             try
             {
                 await _advertStorageService.Confirm(model);
+                await _RaiseAdvertConfirmedMessage(model);
             }
             catch (KeyNotFoundException)
             {
@@ -62,6 +69,24 @@ namespace AdvertApi.Controllers
             }
 
             return new OkResult();
+        }
+
+        private async Task _RaiseAdvertConfirmedMessage(ConfirmAdvertModel model)
+        {
+            var topicArn = _configuration.GetValue<string>("TopicArn");
+            var dbModel = await _advertStorageService.GetById(model.Id);
+
+            using (var client = new AmazonSimpleNotificationServiceClient())
+            {
+                var message = new AdvertConfirmedMessage
+                {
+                    Id = model.Id,
+                    Title = dbModel.Title
+                };
+
+                var messageJson = JsonConvert.SerializeObject(message);
+                await client.PublishAsync(topicArn, messageJson);
+            }
         }
     }
 }

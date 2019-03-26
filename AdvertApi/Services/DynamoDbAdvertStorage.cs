@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AdvertApi.Models;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
+using Amazon.DynamoDBv2.DocumentModel;
 using AutoMapper;
 
 namespace AdvertApi.Services
@@ -15,6 +16,17 @@ namespace AdvertApi.Services
         public DynamoDbAdvertStorage(IMapper mapper)
         {
             _mapper = mapper;
+        }
+
+        public async Task<AdvertDbModel> GetById(string id)
+        {
+            using (var client = new AmazonDynamoDBClient())
+            {
+                using (var context = new DynamoDBContext(client))
+                {
+                    return await context.LoadAsync<AdvertDbModel>(id);
+                }
+            }
         }
 
         public async Task<string> Add(AdvertModel model)
