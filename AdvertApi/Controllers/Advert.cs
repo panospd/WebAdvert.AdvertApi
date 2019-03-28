@@ -29,7 +29,7 @@ namespace AdvertApi.Controllers
         [Route("create")]
         [ProducesResponseType(404)]
         [ProducesResponseType(201, Type = typeof(CreateAdvertResponse))]
-        public async Task<IActionResult> Create(AdvertModel model)
+        public async Task<IActionResult> Create([FromBody]AdvertModel model)
         {
             string recordId;
             try

@@ -8,7 +8,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace AdvertApi.Services
 {
-    [DynamoDBTable("Advert")]
+    [DynamoDBTable("Adverts")]
     public class AdvertDbModel
     {
         [DynamoDBHashKey]
