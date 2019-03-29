@@ -20,4 +20,10 @@
     <ProjectReference Include="..\AdvertApi.Models\AdvertApi.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
