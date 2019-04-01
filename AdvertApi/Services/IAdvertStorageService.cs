@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using AdvertApi.Models;
 
 namespace AdvertApi.Services
@@ -9,5 +10,6 @@ namespace AdvertApi.Services
         Task Confirm(ConfirmAdvertModel model);
         bool CheckHealthAsync();
         Task<AdvertDbModel> GetById(string id);
+        Task<List<AdvertModel>> GetAll();
     }
 }

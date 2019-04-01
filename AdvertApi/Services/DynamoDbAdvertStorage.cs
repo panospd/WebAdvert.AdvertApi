@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AdvertApi.Models;
 using Amazon.DynamoDBv2;
@@ -25,6 +26,20 @@ namespace AdvertApi.Services
                 using (var context = new DynamoDBContext(client))
                 {
                     return await context.LoadAsync<AdvertDbModel>(id);
+                }
+            }
+        }
+
+        public async Task<List<AdvertModel>> GetAll()
+        {
+            using (var client = new AmazonDynamoDBClient())
+            {
+                using (var context = new DynamoDBContext(client))
+                {
+                    var allItems = await context.ScanAsync<AdvertDbModel>(new List<ScanCondition>())
+                        .GetRemainingAsync();
+
+                    return allItems.Select(item => _mapper.Map<AdvertModel>(item)).ToList();
                 }
             }
         }

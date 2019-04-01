@@ -25,6 +25,14 @@ namespace AdvertApi.Controllers
             _configuration = configuration;
         }
 
+        [HttpGet]
+        [Route("all")]
+        public async Task<IActionResult> All()
+        {
+            var model =  await _advertStorageService.GetAll();
+            return Ok(model);
+        }
+
         [HttpPost]
         [Route("create")]
         [ProducesResponseType(404)]
