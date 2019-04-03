@@ -67,7 +67,7 @@ namespace AdvertApi.Controllers
             try
             {
                 await _advertStorageService.Confirm(model);
-                await _RaiseAdvertConfirmedMessage(model);
+                await RaiseAdvertConfirmedMessage(model);
             }
             catch (KeyNotFoundException)
             {
@@ -81,7 +81,7 @@ namespace AdvertApi.Controllers
             return new OkResult();
         }
 
-        private async Task _RaiseAdvertConfirmedMessage(ConfirmAdvertModel model)
+        private async Task RaiseAdvertConfirmedMessage(ConfirmAdvertModel model)
         {
             var topicArn = _configuration.GetValue<string>("TopicArn");
             var dbModel = await _advertStorageService.GetById(model.Id);
