@@ -1,6 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using AdvertApi.HealthChecks;
 using AdvertApi.Services;
+using Amazon.ServiceDiscovery;
+using Amazon.ServiceDiscovery.Model;
+using Amazon.Util;
 using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -50,7 +55,7 @@ namespace AdvertApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public async Task Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -69,8 +74,35 @@ namespace AdvertApi
             });
             
             app.UseCors();
+
+            await RegisterToCloudMap();
+
             app.UseMvc();
             app.UseHealthChecks("/health");
+        }
+
+        private async Task RegisterToCloudMap()
+        {
+            const string serviceId = "srv-3bnclkdyesopssh5";
+            var instanceId = EC2InstanceMetadata.InstanceId;
+
+            if (!string.IsNullOrEmpty(instanceId))
+            {
+                var ipv4 = EC2InstanceMetadata.PrivateIpAddress;
+
+                var client = new AmazonServiceDiscoveryClient();
+
+                await client.RegisterInstanceAsync(new RegisterInstanceRequest
+                {
+                    InstanceId = instanceId,
+                    ServiceId = serviceId,
+                    Attributes = new Dictionary<string, string>
+                    {
+                        {"AWS_INSTANCE_IPV4",ipv4 },
+                        {"AWS_INSTANCE_PORT","80" }
+                    }
+                });
+            }
         }
     }
 }
